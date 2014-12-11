@@ -25,6 +25,11 @@ enum BSPLumps
     MAX_LUMPS
 };
 
+struct BSPHeader
+{
+	char typeId[4];
+	int version;
+};
 
 struct BSPVertex
 {

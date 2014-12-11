@@ -1,15 +1,9 @@
-#include "GLFW/glfw3.h"
+#include "Quake3BSP.h"
 
 int main() {
 
-    if (!glfwInit())
-    {
-        return 1;
-    }
-
-    GLFWwindow* window = glfwCreateWindow(640, 480, "Q3MapView", nullptr, nullptr);
-
-    glfwTerminate();
+	Quake3Bsp bsp;
+	bsp.LoadFromFile(std::string("C:\\Users\\Samuel\\Documents\\Q3MapView\\test-res\\maps\\Level.bsp"));
 
     return 1;
 }
