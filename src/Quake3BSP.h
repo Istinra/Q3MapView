@@ -19,7 +19,16 @@ private:
 	int numFaces;
 	BSPFace* faces;
 
-	void SwizzleVector(BSPVec3& vec3);
+	int numIndices;
+	int* indices;
+
+	int numNodes;
+	BSPNode* nodes;
+
+	int numLeaves;
+	BSPLeaf* leaves;
+
+	void SwizzleVector(Vec3& vec3);
 	void SwizzleVerts();
 	void SwizzleFace();
 };

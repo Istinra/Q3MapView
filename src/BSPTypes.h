@@ -8,7 +8,7 @@ struct BSPVec2
 	float x, y;
 };
 
-struct BSPVec3
+struct Vec3
 {
 	float x, y, z;
 };
@@ -49,7 +49,7 @@ struct BSPHeader
 
 struct BSPVertex
 {
-	BSPVec3 pos;
+	Vec3 pos;
 	BSPVec2 texCoords;
 	BSPVec2 lightMapCoords;
     byte colour;
@@ -75,10 +75,43 @@ struct BSPFace
 	int lightmapId;
 	BSPVec2 lightMapCorner;
 	BSPVec2 lightMapSize;
-	BSPVec3 lightMapPos;
+	Vec3 lightMapPos;
 	float lMapVecs[2][3];
-	BSPVec3 normal;
+	Vec3 normal;
 	int size[2];
+};
+
+struct BSPNode
+{
+	int planeIndex;
+	int children[2];
+	int minsBounding[3];
+	int maxBounding[3];
+};
+
+struct BSPPlane
+{
+	Vec3 normal;
+	float distance; //Distance from origin to plane along normal
+};
+
+struct BSPLeaf
+{
+	int visData;
+	int area;
+	int minsBounding[3];
+	int maxBounding[3];
+	int firstLeafFace;
+	int numLeafFace;
+	int firstLeafBrush;
+	int numLeafBrushes;
+};
+
+struct BSPVisData
+{
+	int numVecs;
+	int vecSize;
+	byte *vectors;
 };
 
 #endif

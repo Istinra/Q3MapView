@@ -1,7 +1,7 @@
 #include "Quake3BSP.h"
 #include <cstdio>
 
-Quake3Bsp::Quake3Bsp() : verts(nullptr), faces(nullptr)
+Quake3Bsp::Quake3Bsp() : verts(nullptr), faces(nullptr), indices(nullptr), nodes(nullptr), leaves(nullptr)
 {
 }
 
@@ -11,6 +11,12 @@ Quake3Bsp::~Quake3Bsp()
 		delete [] verts;
 	if (faces)
 		delete[] faces;
+	if (indices)
+		delete[] indices;
+	if (nodes)
+		delete[] nodes;
+	if (leaves)
+		delete[] leaves;
 }
 
 bool Quake3Bsp::LoadFromFile(std::string fileName)
@@ -43,11 +49,29 @@ bool Quake3Bsp::LoadFromFile(std::string fileName)
 	fread(faces, sizeof(BSPFace), numFaces, f);
 	SwizzleFace();
 
+	//Load Indices
+	numIndices = lumps[INDICES].length / sizeof(int);
+	indices = new int[numIndices];
+	fseek(f, lumps[INDICES].offset, 0);
+	fread(indices, sizeof(int), numIndices, f);
+
+	//Load Nodes
+	numNodes = lumps[NODES].length / sizeof(BSPNode);
+	nodes = new BSPNode[numNodes];
+	fseek(f, lumps[NODES].offset, 0);
+	fread(nodes, sizeof(BSPNode), numNodes, f);
+
+	//Load Leaves
+	numLeaves = lumps[LEAFS].length / sizeof(BSPLeaf);
+	leaves = new BSPLeaf[numLeaves];
+	fseek(f, lumps[LEAFS].offset, 0);
+	fread(leaves, sizeof(BSPLeaf), numLeaves, f);
+
 	fclose(f);
 	return true;
 }
 
-void Quake3Bsp::SwizzleVector(BSPVec3& vec3)
+void Quake3Bsp::SwizzleVector(Vec3& vec3)
 {
 	float temp = vec3.y;
 	vec3.y = vec3.z;
