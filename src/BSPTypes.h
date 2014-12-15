@@ -84,7 +84,8 @@ struct BSPFace
 struct BSPNode
 {
 	int planeIndex;
-	int children[2];
+	int front;
+	int back;
 	int minsBounding[3];
 	int maxBounding[3];
 };
@@ -92,7 +93,7 @@ struct BSPNode
 struct BSPPlane
 {
 	Vec3 normal;
-	float distance; //Distance from origin to plane along normal
+	float distance; //Plane distance from origin
 };
 
 struct BSPLeaf

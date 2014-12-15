@@ -1,7 +1,8 @@
 #include "Quake3BSP.h"
 #include <cstdio>
 
-Quake3Bsp::Quake3Bsp() : verts(nullptr), faces(nullptr), indices(nullptr), nodes(nullptr), leaves(nullptr)
+Quake3Bsp::Quake3Bsp() : verts(nullptr), faces(nullptr), indices(nullptr),
+nodes(nullptr), leaves(nullptr), planes(nullptr)
 {
 }
 
@@ -10,16 +11,18 @@ Quake3Bsp::~Quake3Bsp()
 	if (verts)
 		delete [] verts;
 	if (faces)
-		delete[] faces;
+		delete [] faces;
 	if (indices)
-		delete[] indices;
+		delete [] indices;
 	if (nodes)
-		delete[] nodes;
+		delete [] nodes;
 	if (leaves)
-		delete[] leaves;
+		delete [] leaves;
+	if (planes)
+		delete [] planes;
 }
 
-bool Quake3Bsp::LoadFromFile(std::string fileName)
+bool Quake3Bsp::LoadFromFile(const std::string fileName)
 {
 	FILE *f = fopen(fileName.c_str(), "rb");
 	if (!f)
@@ -47,7 +50,7 @@ bool Quake3Bsp::LoadFromFile(std::string fileName)
 	faces = new BSPFace[numFaces];
 	fseek(f, lumps[FACES].offset, 0);
 	fread(faces, sizeof(BSPFace), numFaces, f);
-	SwizzleFace();
+	SwizzleFaces();
 
 	//Load Indices
 	numIndices = lumps[INDICES].length / sizeof(int);
@@ -67,8 +70,42 @@ bool Quake3Bsp::LoadFromFile(std::string fileName)
 	fseek(f, lumps[LEAFS].offset, 0);
 	fread(leaves, sizeof(BSPLeaf), numLeaves, f);
 
+	//Load Planes
+	numPlanes = lumps[PLANES].length / sizeof(BSPPlane);
+	planes = new BSPPlane[numPlanes];
+	fseek(f, lumps[PLANES].offset, 0);
+	fread(planes, sizeof(BSPPlane), numPlanes, f);
+	SwizzlePlanes();
+
 	fclose(f);
 	return true;
+}
+
+int Quake3Bsp::FindLeaf(const Vec3 position)
+{
+	int nodeIndex = 0;
+
+	float distance;
+	while (nodeIndex > 0)
+	{
+		const BSPNode &node = nodes[nodeIndex];
+		const BSPPlane &plane = planes[node.planeIndex];
+
+		distance = plane.normal.x * position.x +
+			plane.normal.x * position.y +
+			plane.normal.x * position.x - plane.distance;
+
+		if (distance > 0)
+		{
+			nodeIndex = node.front;
+		}
+		else
+		{
+			nodeIndex = node.back;
+		}
+	}
+	//When the node references a leaf the number is negative -(nodeIndex + 1)
+	return ~nodeIndex;
 }
 
 void Quake3Bsp::SwizzleVector(Vec3& vec3)
@@ -86,10 +123,18 @@ void Quake3Bsp::SwizzleVerts()
 	}
 }
 
-void Quake3Bsp::SwizzleFace()
+void Quake3Bsp::SwizzleFaces()
 {
 	for (int i = 0; i < numFaces; ++i)
 	{
 		SwizzleVector(faces[i].normal);
+	}
+}
+
+void Quake3Bsp::SwizzlePlanes()
+{
+	for (int i = 0; i < numPlanes; ++i)
+	{
+		SwizzleVector(planes[i].normal);
 	}
 }

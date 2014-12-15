@@ -10,27 +10,33 @@ public:
 	Quake3Bsp();
 	~Quake3Bsp();
 
-	bool LoadFromFile(std::string fileName);
+	bool LoadFromFile(const std::string fileName);
 
 private:
 	int numVerts;
-	BSPVertex* verts;
+	BSPVertex *verts;
 
 	int numFaces;
-	BSPFace* faces;
+	BSPFace *faces;
 
 	int numIndices;
-	int* indices;
+	int *indices;
 
 	int numNodes;
-	BSPNode* nodes;
+	BSPNode *nodes;
 
 	int numLeaves;
-	BSPLeaf* leaves;
+	BSPLeaf *leaves;
+
+	int numPlanes;
+	BSPPlane *planes;
+
+	int FindLeaf(Vec3 position);
 
 	void SwizzleVector(Vec3& vec3);
 	void SwizzleVerts();
-	void SwizzleFace();
+	void SwizzleFaces();
+	void SwizzlePlanes();
 };
 
 #endif
