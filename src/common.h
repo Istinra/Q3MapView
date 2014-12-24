@@ -3,4 +3,9 @@
 
 typedef unsigned char byte;
 
+struct Time
+{
+	double dt, total;
+};
+
 #endif

@@ -1,6 +1,10 @@
+#define GLEW_STATIC
+#include "glew.h"
+
 #include <GLFW/glfw3.h>
 #include <fstream>
 #include "Quake3BSP.h"
+#include "Renderer.h"
 
 std::fstream fs;
 
@@ -25,6 +29,11 @@ int main() {
 		exit(EXIT_FAILURE);
 	glfwSetErrorCallback(ErrorCallback);
 
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
 	GLFWwindow* window = glfwCreateWindow(640, 480, "Q3MapView", nullptr, nullptr);
 	if (!window)
 	{
@@ -34,10 +43,19 @@ int main() {
 	glfwSetKeyCallback(window, KeyCallback);
 	glfwMakeContextCurrent(window);
 
+	Renderer renderer;
+	renderer.InitGl(window);
+
+	Time time { 0 };
+
 	while (!glfwWindowShouldClose(window))
 	{
-		//Update
+		double newTotal = glfwGetTime();
+		time.dt = newTotal - time.total;
+		time.total = newTotal;
 
+		//Update
+		renderer.Render(time);
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
