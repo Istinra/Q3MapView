@@ -1,5 +1,6 @@
-#define GLEW_STATIC
 #include "glew.h"
+
+#include "ShaderManager.h"
 
 #include <GLFW/glfw3.h>
 #include <fstream>
@@ -40,13 +41,24 @@ int main() {
 		glfwTerminate();
 		exit(EXIT_FAILURE);
 	}
+
 	glfwSetKeyCallback(window, KeyCallback);
 	glfwMakeContextCurrent(window);
+
+	GLenum err = glewInit();
+	if (GLEW_OK != err)
+	{
+		/* Problem: glewInit failed, something is seriously wrong. */
+		fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
+	}
 
 	Renderer renderer;
 	renderer.InitGl(window);
 
 	Time time { 0 };
+
+	ShaderManager s;
+	bool shaders = s.LoadDefaultShaders();
 
 	while (!glfwWindowShouldClose(window))
 	{

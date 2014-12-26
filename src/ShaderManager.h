@@ -25,7 +25,7 @@ public:
 	ShaderManager();
 	~ShaderManager();
 
-	void LoadDefaultShaders();
+	bool LoadDefaultShaders();
 
 	void UseProgram(ShaderProgs program);
 
