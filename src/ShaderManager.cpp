@@ -29,39 +29,53 @@ ShaderManager::~ShaderManager()
 
 bool ShaderManager::LoadDefaultShaders()
 {
-	const char *vertexShaderSource =
-		"#version 330 core\n"
+//	const char *vertexShaderSource =
+//		"#version 330 core\n"
+//
+//		"precision highp float;\n"
+//
+//		"uniform mat4 projectionMatrix;\n"
+//		"uniform mat4 modelviewMatrix;\n"
+//
+//		"in vec3 position;\n"
+//
+//		"out vec4 pos;\n"
+//
+//		"void main(void)\n"
+//		"{\n"
+//			"gl_Position = projectionMatrix * modelviewMatrix * vec4(position, 1);\n"
+//			"pos = vec4(position, 1);\n"
+//		"};\n";
 
-		"precision highp float;\n"
+	const char* vertexShaderSource =
+		"#version 400\n"
+		"in vec3 vp;"
+		"void main () {"
+		"  gl_Position = vec4 (vp, 1.0);"
+		"}";
 
-		"uniform mat4 projectionMatrix;\n"
-		"uniform mat4 modelviewMatrix;\n"
+//	const char * const fragmentShaderSource =
+//		"#version 330 core\n"
+//
+//		"precision highp float;\n"
+//
+//		"uniform vec4 boxColour;\n"
+//
+//		"in vec4 pos;\n"
+//
+//		"out vec4 fragColour;\n"
+//
+//		"void main(void)\n"
+//		"{\n"
+//			"fragColour = pos;//boxColour;\n"
+//		"}\n";
 
-		"in vec3 position;\n"
-
-		"out vec4 pos;\n"
-
-		"void main(void)\n"
-		"{\n"
-			"gl_Position = projectionMatrix * modelviewMatrix * vec4(position, 1);\n"
-			"pos = vec4(position, 1);\n"
-		"};\n";
-
-	const char * const fragmentShaderSource =
-		"#version 330 core\n"
-
-		"precision highp float;\n"
-
-		"uniform vec4 boxColour;\n"
-
-		"in vec4 pos;\n"
-
-		"out vec4 fragColour;\n"
-
-		"void main(void)\n"
-		"{\n"
-			"fragColour = pos;//boxColour;\n"
-		"}\n";
+	const char* fragmentShaderSource =
+		"#version 400\n"
+		"out vec4 frag_colour;"
+		"void main () {"
+		"  frag_colour = vec4 (0.5, 0.0, 0.5, 1.0);"
+		"}";
 
 	ShaderProgram& defaultShader = programs[DEFAULT];
 	defaultShader.vertexId = glCreateShader(GL_VERTEX_SHADER);

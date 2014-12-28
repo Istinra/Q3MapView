@@ -4,15 +4,22 @@
 
 #include <GLFW/glfw3.h>
 #include <fstream>
+
 #include "Quake3BSP.h"
 #include "Renderer.h"
+#include "Keyboard.h"
 
 std::fstream fs;
+Keyboard* kb;
 
 void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, GL_TRUE);
+	else if (action == GLFW_PRESS)
+		kb->KeyDown(key);
+	else if (action == GLFW_RELEASE)
+		kb->KeyUp(key);
 }
 
 void ErrorCallback(int error, const char* description)
@@ -42,7 +49,6 @@ int main() {
 		exit(EXIT_FAILURE);
 	}
 
-	glfwSetKeyCallback(window, KeyCallback);
 	glfwMakeContextCurrent(window);
 
 	GLenum err = glewInit();
@@ -52,13 +58,14 @@ int main() {
 		fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
 	}
 
+	Keyboard keyboard;
+	kb = &keyboard;
+	glfwSetKeyCallback(window, KeyCallback);
+
 	Renderer renderer;
 	renderer.InitGl(window);
 
 	Time time { 0 };
-
-	ShaderManager s;
-	bool shaders = s.LoadDefaultShaders();
 
 	while (!glfwWindowShouldClose(window))
 	{

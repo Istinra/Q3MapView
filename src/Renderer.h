@@ -3,6 +3,7 @@
 
 #include <GLFW/glfw3.h>
 #include "Common.h"
+#include "ShaderManager.h"
 
 class Renderer
 {
@@ -17,6 +18,11 @@ private:
 	int width;
 	int height;
 	float ratio;
+
+	ShaderManager shaderManager;
+
+	//Test remove me
+	unsigned int vao, vbo;
 };
 
 #endif
