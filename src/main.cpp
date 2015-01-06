@@ -28,9 +28,6 @@ void ErrorCallback(int error, const char* description)
 }
 int main() {
 
-//	Quake3Bsp bsp;
-//	bsp.LoadFromFile(std::string("C:\\Users\\Samuel\\Documents\\Q3MapView\\test-res\\maps\\Level.bsp"));
-
 	fs.open("glfw.log", std::fstream::out | std::fstream::app);
 
 	if (!glfwInit()) 
@@ -54,15 +51,15 @@ int main() {
 	GLenum err = glewInit();
 	if (GLEW_OK != err)
 	{
-		/* Problem: glewInit failed, something is seriously wrong. */
-		fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
+		//glewGetErrorString(err)
+		return -1;
 	}
 
 	Keyboard keyboard;
 	kb = &keyboard;
 	glfwSetKeyCallback(window, KeyCallback);
 
-	Renderer renderer;
+	Renderer renderer(keyboard);
 	renderer.InitGl(window);
 
 	Time time { 0 };
@@ -72,7 +69,7 @@ int main() {
 		double newTotal = glfwGetTime();
 		time.dt = newTotal - time.total;
 		time.total = newTotal;
-
+		
 		//Update
 		renderer.Render(time);
 

@@ -8,6 +8,10 @@ wglew.h
 glew.c
 ShaderManager.h
 ShaderManager.cpp
+Keyboard.h
+Keyboard.cpp
+FreeCamera.h
+FreeCamera.cpp
 Renderer.h
 Renderer.cpp)
 

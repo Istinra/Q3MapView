@@ -1,6 +1,8 @@
 #ifndef _SHADER_MANAGER_H_
 #define _SHADER_MANAGER_H_
 
+#include <mat4x4.hpp>
+
 enum ShaderUniformConstants
 {
 	MO = 0,
@@ -28,6 +30,7 @@ public:
 	bool LoadDefaultShaders();
 
 	void UseProgram(ShaderProgs program);
+	void BindMatiricies(const glm::mat4x4& proj, const glm::mat4x4& view);
 
 private:
 	ShaderProgram programs[MAX_SHADER_PROGS];

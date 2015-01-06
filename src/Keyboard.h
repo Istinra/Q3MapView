@@ -18,7 +18,7 @@ public:
 		keyStates[key] = false;
 	}
 
-	bool IsKeyUp(int key)
+	bool IsKeyDown(int key)
 	{
 		return keyStates[key];
 	}

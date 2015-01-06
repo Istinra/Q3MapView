@@ -12,6 +12,9 @@ public:
 
 	bool LoadFromFile(const std::string fileName);
 
+	BSPVertex const * const Verts() const { return verts; }
+	int VertCount() const { return numVerts; }
+
 private:
 	int numVerts;
 	BSPVertex *verts;

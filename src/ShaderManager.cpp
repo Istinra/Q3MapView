@@ -1,7 +1,7 @@
 #include "glew.h"
 #include <GLFW/glfw3.h>
+#include <gtc/type_ptr.hpp>
 #include "ShaderManager.h"
-
 #include <string>
 
 
@@ -29,50 +29,24 @@ ShaderManager::~ShaderManager()
 
 bool ShaderManager::LoadDefaultShaders()
 {
-//	const char *vertexShaderSource =
-//		"#version 330 core\n"
-//
-//		"precision highp float;\n"
-//
-//		"uniform mat4 projectionMatrix;\n"
-//		"uniform mat4 modelviewMatrix;\n"
-//
-//		"in vec3 position;\n"
-//
-//		"out vec4 pos;\n"
-//
-//		"void main(void)\n"
-//		"{\n"
-//			"gl_Position = projectionMatrix * modelviewMatrix * vec4(position, 1);\n"
-//			"pos = vec4(position, 1);\n"
-//		"};\n";
-
-	const char* vertexShaderSource =
+	const char *vertexShaderSource =
 		"#version 400\n"
-		"in vec3 vp;"
-		"void main () {"
-		"  gl_Position = vec4 (vp, 1.0);"
-		"}";
 
-//	const char * const fragmentShaderSource =
-//		"#version 330 core\n"
-//
-//		"precision highp float;\n"
-//
-//		"uniform vec4 boxColour;\n"
-//
-//		"in vec4 pos;\n"
-//
-//		"out vec4 fragColour;\n"
-//
-//		"void main(void)\n"
-//		"{\n"
-//			"fragColour = pos;//boxColour;\n"
-//		"}\n";
+		"uniform mat4 projectionMatrix;\n"
+		"uniform mat4 modelviewMatrix;\n"
+
+		"in vec3 vp;\n"
+
+		"void main()\n"
+		"{\n"
+			"gl_Position = projectionMatrix * modelviewMatrix * vec4(vp, 1);\n"
+		"};\n";
 
 	const char* fragmentShaderSource =
 		"#version 400\n"
+
 		"out vec4 frag_colour;"
+
 		"void main () {"
 		"  frag_colour = vec4 (0.5, 0.0, 0.5, 1.0);"
 		"}";
@@ -109,4 +83,13 @@ void ShaderManager::UseProgram(ShaderProgs program)
 		activeProgram = program;
 		glUseProgram(programs[program].programId);
 	}
+}
+
+void ShaderManager::BindMatiricies(const glm::mat4x4& proj, const glm::mat4x4& view)
+{
+	const ShaderProgram& prog = programs[activeProgram];
+	int projLoc = glGetUniformLocation(prog.programId, "projectionMatrix");
+	glUniformMatrix4fv(projLoc, 1, false, glm::value_ptr(proj));
+	int vmLoc = glGetUniformLocation(prog.programId, "modelviewMatrix");
+	glUniformMatrix4fv(vmLoc, 1, false, glm::value_ptr(view));
 }
