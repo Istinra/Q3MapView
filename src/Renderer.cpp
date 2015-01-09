@@ -11,6 +11,8 @@ Renderer::Renderer(Keyboard& keyboard) : width(0), height(0), ratio(0), camera(k
 
 Renderer::~Renderer()
 {
+	glDeleteBuffers(1, &vbo);
+	glDeleteBuffers(1, &ibo);
 }
 
 void Renderer::InitGl(GLFWwindow* window)
@@ -21,19 +23,20 @@ void Renderer::InitGl(GLFWwindow* window)
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
 
-	projection = glm::perspective(0.785398163f, ratio, 0.1f, 1000.0f);
+	projection = glm::perspective(0.785398163f, ratio, 0.001f, 10000.0f);
 	
 	shaderManager.LoadDefaultShaders();
 
+	glGenVertexArrays(1, &vao);
+	glBindVertexArray(vao);
 
+	glGenBuffers(1, &ibo);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, bsp.IndiceCount() * sizeof(int), bsp.Indices(), GL_STATIC_DRAW);
 
 	glGenBuffers(1, &vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-
-	glBufferData(GL_ARRAY_BUFFER, bsp.VertCount() * sizeof (BSPVertex), bsp.Verts(), GL_STATIC_DRAW);
-
-	glGenVertexArrays(1, &vao);
-	glBindVertexArray(vao);
+	glBufferData(GL_ARRAY_BUFFER, bsp.VertCount() * sizeof(BSPVertex), bsp.Verts(), GL_STATIC_DRAW);
 
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(BSPVertex), 0);
@@ -46,21 +49,34 @@ void Renderer::InitGl(GLFWwindow* window)
 	//glEnableVertexAttribArray(4);
 	//glVertexAttribPointer(4, 2, GL_FLOAT, GL_FALSE, sizeof(BSPVertex), (void *) (10 * sizeof(float)));
 
-	//float points[] = {
-	//	0.0f, 0.5f, -1.0f,
-	//	0.5f, -0.5f, -1.0f,
-	//	-0.5f, -0.5f, -1.0f
-	//};
+	/*float points[] = {
+		0.0f, 0.5f, -1.0f,
+		0.5f, -0.5f, -1.0f,
+		-0.5f, -0.5f, -1.0f
+	};*/
 
-	//glGenBuffers(1, &vbo);
-	//glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	//glBufferData(GL_ARRAY_BUFFER, 9 * sizeof (float), points, GL_STATIC_DRAW);
+	BSPVertex points[3];
+	points[0].pos.x = 0;
+	points[0].pos.y = 0.5f;
+	points[0].pos.z = -1;
 
-	//glGenVertexArrays(1, &vao);
-	//glBindVertexArray(vao);
-	//glEnableVertexAttribArray(0);
-	//glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	//glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+	points[1].pos.x = 0.5f;
+	points[1].pos.y = -0.5f;
+	points[1].pos.z = -1;
+
+	points[2].pos.x = -0.5f;
+	points[2].pos.y = -0.5f;
+	points[2].pos.z = -1;
+
+	glGenBuffers(1, &vbo2);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo2);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(points), points, GL_STATIC_DRAW);
+
+	glGenVertexArrays(1, &vao2);
+	glBindVertexArray(vao2);
+	glEnableVertexAttribArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo2);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(BSPVertex), 0);
 
 }
 
@@ -74,7 +90,20 @@ void Renderer::Render(const Time time)
 	shaderManager.UseProgram(DEFAULT);
 	shaderManager.BindMatiricies(projection, camera.ViewMatrix());
 
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+
 	glBindVertexArray(vao);
-	glDrawArrays(GL_TRIANGLES, 0, bsp.VertCount());
+
+	BSPFace const * faces = bsp.Faces();
+	int const * indices = bsp.Indices();
+	for (int i = 0; i < bsp.FaceCount(); i++)
+	{
+		glDrawElements(GL_TRIANGLES, faces->numIndices, GL_UNSIGNED_INT, (void*)(faces->startIndex * sizeof(int)));
+		++faces;
+	}
+
+	glBindVertexArray(vao2);
+	glDrawArrays(GL_TRIANGLES, 0, 3);
 
 }

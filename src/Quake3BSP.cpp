@@ -81,7 +81,7 @@ bool Quake3Bsp::LoadFromFile(const std::string fileName)
 	return true;
 }
 
-int Quake3Bsp::FindLeaf(const Vec3 position)
+int Quake3Bsp::FindLeaf(const Vec3 position) const
 {
 	int nodeIndex = 0;
 
@@ -108,7 +108,7 @@ int Quake3Bsp::FindLeaf(const Vec3 position)
 	return ~nodeIndex;
 }
 
-void Quake3Bsp::SwizzleVector(Vec3& vec3)
+void Quake3Bsp::SwizzleVector(Vec3& vec3) const
 {
 	float temp = vec3.y;
 	vec3.y = vec3.z;

@@ -12,8 +12,14 @@ public:
 
 	bool LoadFromFile(const std::string fileName);
 
+	BSPFace const * const Faces() const { return faces; }
+	int FaceCount() const { return numFaces; }
+
 	BSPVertex const * const Verts() const { return verts; }
 	int VertCount() const { return numVerts; }
+
+	int const * const Indices() const { return indices; }
+	int IndiceCount() const { return numIndices; }
 
 private:
 	int numVerts;
@@ -34,9 +40,9 @@ private:
 	int numPlanes;
 	BSPPlane *planes;
 
-	int FindLeaf(Vec3 position);
+	int FindLeaf(Vec3 position) const;
 
-	void SwizzleVector(Vec3& vec3);
+	void SwizzleVector(Vec3& vec3) const;
 	void SwizzleVerts();
 	void SwizzleFaces();
 	void SwizzlePlanes();

@@ -3,7 +3,7 @@
 
 #include "Common.h"
 
-struct BSPVec2
+struct Vec2
 {
 	float x, y;
 };
@@ -50,9 +50,10 @@ struct BSPHeader
 struct BSPVertex
 {
 	Vec3 pos;
-	BSPVec2 texCoords;
-	BSPVec2 lightMapCoords;
-    byte colour;
+	Vec2 texCoords;
+	Vec2 lightMapCoords;
+	Vec3 normal;
+    byte colour[4];
 };
 
 enum BSPFaceType
@@ -73,8 +74,8 @@ struct BSPFace
 	int startIndex;
 	int numIndices;
 	int lightmapId;
-	BSPVec2 lightMapCorner;
-	BSPVec2 lightMapSize;
+	Vec2 lightMapCorner;
+	Vec2 lightMapSize;
 	Vec3 lightMapPos;
 	float lMapVecs[2][3];
 	Vec3 normal;
