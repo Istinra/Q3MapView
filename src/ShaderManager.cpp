@@ -36,19 +36,22 @@ bool ShaderManager::LoadDefaultShaders()
 		"uniform mat4 modelviewMatrix;\n"
 
 		"in vec3 vp;\n"
+		"out vec3 ex;\n"
 
 		"void main()\n"
 		"{\n"
 			"gl_Position = projectionMatrix * modelviewMatrix * vec4(vp, 1);\n"
+			"ex = vp;"
 		"};\n";
 
 	const char* fragmentShaderSource =
 		"#version 400\n"
 
 		"out vec4 frag_colour;"
+		"in vec3 ex;"
 
 		"void main () {"
-		"  frag_colour = vec4 (0.5, 0.0, 0.5, 1.0);"
+		"  frag_colour = vec4 (ex.x > 0 ? 1 : 0, ex.y > 0 ? 1 : 0, ex.z > 0 ? 1 : 0, 1.0);"
 		"}";
 
 	ShaderProgram& defaultShader = programs[DEFAULT];

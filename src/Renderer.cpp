@@ -23,7 +23,7 @@ void Renderer::InitGl(GLFWwindow* window)
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
 
-	projection = glm::perspective(0.785398163f, ratio, 0.001f, 10000.0f);
+	projection = glm::perspective(0.785398163f, ratio, 0.001f, 1000000.0f);
 	
 	shaderManager.LoadDefaultShaders();
 
@@ -40,20 +40,14 @@ void Renderer::InitGl(GLFWwindow* window)
 
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(BSPVertex), 0);
-	//glEnableVertexAttribArray(1);
-	//glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(BSPVertex), (void *) (3 * sizeof(float)));
-	//glEnableVertexAttribArray(2);
-	//glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(BSPVertex), (void *) (6 * sizeof(float)));
-	//glEnableVertexAttribArray(3);
-	//glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, sizeof(BSPVertex), (void *) (8 * sizeof(float)));
-	//glEnableVertexAttribArray(4);
-	//glVertexAttribPointer(4, 2, GL_FLOAT, GL_FALSE, sizeof(BSPVertex), (void *) (10 * sizeof(float)));
-
-	/*float points[] = {
-		0.0f, 0.5f, -1.0f,
-		0.5f, -0.5f, -1.0f,
-		-0.5f, -0.5f, -1.0f
-	};*/
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(BSPVertex), (void *) (3 * sizeof(float)));
+	glEnableVertexAttribArray(2);
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(BSPVertex), (void *) (5 * sizeof(float)));
+	glEnableVertexAttribArray(3);
+	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(BSPVertex), (void *) (7 * sizeof(float)));
+	glEnableVertexAttribArray(4);
+	glVertexAttribPointer(4, 4, GL_BYTE, GL_FALSE, sizeof(BSPVertex), (void *) (10 * sizeof(float)));
 
 	BSPVertex points[3];
 	points[0].pos.x = 0;
@@ -99,7 +93,8 @@ void Renderer::Render(const Time time)
 	int const * indices = bsp.Indices();
 	for (int i = 0; i < bsp.FaceCount(); i++)
 	{
-		glDrawElements(GL_TRIANGLES, faces->numIndices, GL_UNSIGNED_INT, (void*)(faces->startIndex * sizeof(int)));
+		glDrawElementsBaseVertex(GL_TRIANGLES, faces->numIndices, GL_UNSIGNED_INT, 
+			(void*) (faces->startIndex * sizeof(int)), faces->startVertIndex);
 		++faces;
 	}
 
