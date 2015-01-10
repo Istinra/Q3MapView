@@ -11,6 +11,7 @@ Renderer::Renderer(Keyboard& keyboard) : width(0), height(0), ratio(0), camera(k
 
 Renderer::~Renderer()
 {
+	glDeleteVertexArrays(1, &vao)
 	glDeleteBuffers(1, &vbo);
 	glDeleteBuffers(1, &ibo);
 }
@@ -48,30 +49,6 @@ void Renderer::InitGl(GLFWwindow* window)
 	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(BSPVertex), (void *) (7 * sizeof(float)));
 	glEnableVertexAttribArray(4);
 	glVertexAttribPointer(4, 4, GL_BYTE, GL_FALSE, sizeof(BSPVertex), (void *) (10 * sizeof(float)));
-
-	BSPVertex points[3];
-	points[0].pos.x = 0;
-	points[0].pos.y = 0.5f;
-	points[0].pos.z = -1;
-
-	points[1].pos.x = 0.5f;
-	points[1].pos.y = -0.5f;
-	points[1].pos.z = -1;
-
-	points[2].pos.x = -0.5f;
-	points[2].pos.y = -0.5f;
-	points[2].pos.z = -1;
-
-	glGenBuffers(1, &vbo2);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo2);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(points), points, GL_STATIC_DRAW);
-
-	glGenVertexArrays(1, &vao2);
-	glBindVertexArray(vao2);
-	glEnableVertexAttribArray(0);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo2);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(BSPVertex), 0);
-
 }
 
 void Renderer::Render(const Time time)
@@ -97,8 +74,4 @@ void Renderer::Render(const Time time)
 			(void*) (faces->startIndex * sizeof(int)), faces->startVertIndex);
 		++faces;
 	}
-
-	glBindVertexArray(vao2);
-	glDrawArrays(GL_TRIANGLES, 0, 3);
-
 }

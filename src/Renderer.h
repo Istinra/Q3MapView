@@ -29,7 +29,7 @@ private:
 
 	//Test remove me
 	Quake3Bsp bsp;
-	unsigned int vao, vbo, ibo, vao2, vbo2;
+	unsigned int vao, vbo, ibo;
 };
 
 #endif
