@@ -11,7 +11,7 @@ Renderer::Renderer(Keyboard& keyboard) : width(0), height(0), ratio(0), camera(k
 
 Renderer::~Renderer()
 {
-	glDeleteVertexArrays(1, &vao)
+	glDeleteVertexArrays(1, &vao);
 	glDeleteBuffers(1, &vbo);
 	glDeleteBuffers(1, &ibo);
 }
@@ -49,6 +49,13 @@ void Renderer::InitGl(GLFWwindow* window)
 	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(BSPVertex), (void *) (7 * sizeof(float)));
 	glEnableVertexAttribArray(4);
 	glVertexAttribPointer(4, 4, GL_BYTE, GL_FALSE, sizeof(BSPVertex), (void *) (10 * sizeof(float)));
+
+	glActiveTexture(GL_TEXTURE0);
+	glGenTextures(1, &lightmapAlias);
+	glBindTexture(GL_TEXTURE_2D, lightmapAlias);
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 128 * bsp.LightMapCount(), 128, 0, GL_RGB, GL_UNSIGNED_BYTE, bsp.LightMaps());
 }
 
 void Renderer::Render(const Time time)

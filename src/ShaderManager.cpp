@@ -35,13 +35,18 @@ bool ShaderManager::LoadDefaultShaders()
 		"uniform mat4 projectionMatrix;\n"
 		"uniform mat4 modelviewMatrix;\n"
 
-		"in vec3 vp;\n"
+		"in vec3 pos;\n"
+		"in vec2 texCoords;\n"
+		"in vec2 lightCoords;\n"
+		"in vec3 normal;\n"
+		"in uint colour;\n"
+
 		"out vec3 ex;\n"
 
 		"void main()\n"
 		"{\n"
-			"gl_Position = projectionMatrix * modelviewMatrix * vec4(vp, 1);\n"
-			"ex = vp;"
+			"gl_Position = projectionMatrix * modelviewMatrix * vec4(pos, 1);\n"
+			"ex = pos;"
 		"};\n";
 
 	const char* fragmentShaderSource =

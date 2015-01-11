@@ -116,4 +116,9 @@ struct BSPVisData
 	byte *vectors;
 };
 
+struct BSPLightMap
+{
+	byte imageData[128][128][3];
+};
+
 #endif

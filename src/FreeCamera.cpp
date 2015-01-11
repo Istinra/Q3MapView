@@ -5,7 +5,10 @@
 
 FreeCamera::FreeCamera(Keyboard& keyboard) : keyboard(keyboard), pitch(0), yaw(0)
 {
-	position.x = position.y = position.z = 0;
+	//position.x = position.y = position.z = 0;
+	position.x = 184;
+	position.y = 336;
+	position.z = 88;
 }
 
 void FreeCamera::Update(Time t)
@@ -41,15 +44,6 @@ void FreeCamera::Update(Time t)
 	if (keyboard.IsKeyDown(GLFW_KEY_Z))
 	{
 		position.y -= dt * 1;
-	}
-	if (keyboard.IsKeyDown(GLFW_KEY_H))
-	{
-		//position.x = 0;
-		//position.y = 264;
-		//position.z = 100;
-		position.x = 184;
-		position.y = 336;
-		position.z = 88;
 	}
 	if (keyboard.IsKeyDown(GLFW_KEY_LEFT))
 	{

@@ -21,6 +21,9 @@ public:
 	int const * const Indices() const { return indices; }
 	int IndiceCount() const { return numIndices; }
 
+	BSPLightMap const * const LightMaps() const { return lightMaps; }
+	int LightMapCount() const { return numLightMaps; }
+
 private:
 	int numVerts;
 	BSPVertex *verts;
@@ -39,6 +42,9 @@ private:
 
 	int numPlanes;
 	BSPPlane *planes;
+
+	int numLightMaps;
+	BSPLightMap *lightMaps;
 
 	int FindLeaf(Vec3 position) const;
 

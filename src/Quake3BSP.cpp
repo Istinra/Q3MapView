@@ -2,7 +2,7 @@
 #include <cstdio>
 
 Quake3Bsp::Quake3Bsp() : verts(nullptr), faces(nullptr), indices(nullptr),
-nodes(nullptr), leaves(nullptr), planes(nullptr)
+nodes(nullptr), leaves(nullptr), planes(nullptr), lightMaps(nullptr)
 {
 }
 
@@ -20,6 +20,8 @@ Quake3Bsp::~Quake3Bsp()
 		delete [] leaves;
 	if (planes)
 		delete [] planes;
+	if (lightMaps)
+		delete[] lightMaps;
 }
 
 bool Quake3Bsp::LoadFromFile(const std::string fileName)
@@ -76,6 +78,12 @@ bool Quake3Bsp::LoadFromFile(const std::string fileName)
 	fseek(f, lumps[PLANES].offset, 0);
 	fread(planes, sizeof(BSPPlane), numPlanes, f);
 	SwizzlePlanes();
+
+	//Load Light Maps
+	numLightMaps = lumps[LIGHT_MAPS].length / sizeof(BSPLightMap);
+	lightMaps = new BSPLightMap[numLightMaps];
+	fseek(f, lumps[PLANES].offset, 0);
+	fread(lightMaps, sizeof(BSPLightMap), numLightMaps, f);
 
 	fclose(f);
 	return true;

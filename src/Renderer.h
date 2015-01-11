@@ -30,6 +30,8 @@ private:
 	//Test remove me
 	Quake3Bsp bsp;
 	unsigned int vao, vbo, ibo;
+
+	unsigned int lightmapAlias;
 };
 
 #endif
