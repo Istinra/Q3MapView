@@ -56,6 +56,7 @@ void Renderer::InitGl(GLFWwindow* window)
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 128 * bsp.LightMapCount(), 128, 0, GL_RGB, GL_UNSIGNED_BYTE, bsp.LightMaps());
+	shaderManager.BindTextures();
 }
 
 void Renderer::Render(const Time time)
@@ -75,6 +76,7 @@ void Renderer::Render(const Time time)
 
 	BSPFace const * faces = bsp.Faces();
 	int const * indices = bsp.Indices();
+	shaderManager.BindLightMapId(faces->lightmapId);
 	for (int i = 0; i < bsp.FaceCount(); i++)
 	{
 		glDrawElementsBaseVertex(GL_TRIANGLES, faces->numIndices, GL_UNSIGNED_INT, 

@@ -1,3 +1,4 @@
+#include <vector>
 #include "glew.h"
 #include <GLFW/glfw3.h>
 #include <gtc/type_ptr.hpp>
@@ -41,46 +42,86 @@ bool ShaderManager::LoadDefaultShaders()
 		"in vec3 normal;\n"
 		"in uint colour;\n"
 
-		"out vec3 ex;\n"
+		"out vec2 v_TexCoordinate;"
 
 		"void main()\n"
 		"{\n"
 			"gl_Position = projectionMatrix * modelviewMatrix * vec4(pos, 1);\n"
-			"ex = pos;"
+			"v_TexCoordinate = lightCoords;" //This breaks it?
 		"};\n";
 
 	const char* fragmentShaderSource =
 		"#version 400\n"
 
-		"out vec4 frag_colour;"
-		"in vec3 ex;"
+		"uniform sampler2D lightmapAtlas;\n"
+		"uniform int lightmapId;\n"
 
-		"void main () {"
-		"  frag_colour = vec4 (ex.x > 0 ? 1 : 0, ex.y > 0 ? 1 : 0, ex.z > 0 ? 1 : 0, 1.0);"
-		"}";
+		"in vec2 v_TexCoordinate;\n"
+
+		"out vec4 frag_colour;\n"
+
+		"void main () {\n"
+		"  frag_colour = texture2D(lightmapAtlas, v_TexCoordinate);\n"
+		"}\n";
 
 	ShaderProgram& defaultShader = programs[DEFAULT];
 	defaultShader.vertexId = glCreateShader(GL_VERTEX_SHADER);
 	defaultShader.fragmentId = glCreateShader(GL_FRAGMENT_SHADER);
 
+	int status;
+
 	glShaderSource(defaultShader.vertexId, 1, &vertexShaderSource, nullptr);
 	glShaderSource(defaultShader.fragmentId, 1, &fragmentShaderSource, nullptr);
 
 	glCompileShader(defaultShader.vertexId);
+
+	glGetShaderiv(defaultShader.vertexId, GL_COMPILE_STATUS, &status);
+	if (status == GL_FALSE)
+	{
+		GLint maxLength = 0;
+		glGetShaderiv(defaultShader.vertexId, GL_INFO_LOG_LENGTH, &maxLength);
+		std::vector<GLchar> infoLog(maxLength);
+		glGetShaderInfoLog(defaultShader.vertexId, maxLength, &maxLength, &infoLog[0]);
+		std::string s = std::string(&infoLog[0], maxLength);
+		return false;
+	}
+
 	glCompileShader(defaultShader.fragmentId);
+
+	glGetShaderiv(defaultShader.fragmentId, GL_COMPILE_STATUS, &status);
+	if (status == GL_FALSE)
+	{
+		GLint maxLength = 0;
+		glGetShaderiv(defaultShader.fragmentId, GL_INFO_LOG_LENGTH, &maxLength);
+		std::vector<GLchar> infoLog(maxLength);
+		glGetShaderInfoLog(defaultShader.fragmentId, maxLength, &maxLength, &infoLog[0]);
+		std::string s = std::string(&infoLog[0], maxLength);
+		return false;
+	}
 
 	defaultShader.programId = glCreateProgram();
 	glAttachShader(defaultShader.programId, defaultShader.vertexId);
 	glAttachShader(defaultShader.programId, defaultShader.fragmentId);
 	
+	glBindAttribLocation(defaultShader.programId, 0, "pos");
+	glBindAttribLocation(defaultShader.programId, 1, "texCoords");
+	glBindAttribLocation(defaultShader.programId, 2, "lightCoords");
+	glBindAttribLocation(defaultShader.programId, 3, "normal");
+	glBindAttribLocation(defaultShader.programId, 4, "colour");
+	
 	glLinkProgram(defaultShader.programId);
 
-	int status;
+	
 	glGetProgramiv(defaultShader.programId, GL_LINK_STATUS, &status);
 	if (status == GL_FALSE)
 	{
+		GLint maxLength = 0;
+		glGetProgramiv(defaultShader.programId, GL_INFO_LOG_LENGTH, &maxLength);
+		std::vector<GLchar> infoLog(maxLength);
+		glGetProgramInfoLog(defaultShader.programId, maxLength, &maxLength, &infoLog[0]);
 		return false;
 	}
+	
 	return true;
 }
 
@@ -100,4 +141,18 @@ void ShaderManager::BindMatiricies(const glm::mat4x4& proj, const glm::mat4x4& v
 	glUniformMatrix4fv(projLoc, 1, false, glm::value_ptr(proj));
 	int vmLoc = glGetUniformLocation(prog.programId, "modelviewMatrix");
 	glUniformMatrix4fv(vmLoc, 1, false, glm::value_ptr(view));
+}
+
+void ShaderManager::BindTextures()
+{
+	const ShaderProgram& prog = programs[activeProgram];
+	int lightmapAtlas = glGetUniformLocation(prog.programId, "lightmapAtlas");
+	glUniform1i(lightmapAtlas, 0);	
+}
+
+void ShaderManager::BindLightMapId(int id)
+{
+	const ShaderProgram& prog = programs[activeProgram];
+	int lightmapId = glGetUniformLocation(prog.programId, "lightmapId");
+	glUniform1i(lightmapId, 0);
 }
