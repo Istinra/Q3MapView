@@ -23,10 +23,12 @@ void Renderer::InitGl(GLFWwindow* window)
 	glViewport(0, 0, width, height);
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
+	glClearColor(0.2f, 0.2f, 0.2f, 1);
 
 	projection = glm::perspective(0.785398163f, ratio, 0.001f, 1000000.0f);
 	
 	shaderManager.LoadDefaultShaders();
+	shaderManager.UseProgram(DEFAULT);
 
 	glGenVertexArrays(1, &vao);
 	glBindVertexArray(vao);
@@ -50,13 +52,14 @@ void Renderer::InitGl(GLFWwindow* window)
 	glEnableVertexAttribArray(4);
 	glVertexAttribPointer(4, 4, GL_BYTE, GL_FALSE, sizeof(BSPVertex), (void *) (10 * sizeof(float)));
 
+	//Textures
 	glActiveTexture(GL_TEXTURE0);
 	glGenTextures(1, &lightmapAlias);
 	glBindTexture(GL_TEXTURE_2D, lightmapAlias);
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 128 * bsp.LightMapCount(), 128, 0, GL_RGB, GL_UNSIGNED_BYTE, bsp.LightMaps());
-	shaderManager.BindTextures();
+	shaderManager.BindLightMapTexture(lightmapAlias);
 }
 
 void Renderer::Render(const Time time)
@@ -76,7 +79,7 @@ void Renderer::Render(const Time time)
 
 	BSPFace const * faces = bsp.Faces();
 	int const * indices = bsp.Indices();
-	shaderManager.BindLightMapId(faces->lightmapId);
+	glBindTexture(GL_TEXTURE_2D, lightmapAlias);
 	for (int i = 0; i < bsp.FaceCount(); i++)
 	{
 		glDrawElementsBaseVertex(GL_TRIANGLES, faces->numIndices, GL_UNSIGNED_INT, 

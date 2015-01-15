@@ -54,7 +54,6 @@ bool ShaderManager::LoadDefaultShaders()
 		"#version 400\n"
 
 		"uniform sampler2D lightmapAtlas;\n"
-		"uniform int lightmapId;\n"
 
 		"in vec2 v_TexCoordinate;\n"
 
@@ -143,16 +142,9 @@ void ShaderManager::BindMatiricies(const glm::mat4x4& proj, const glm::mat4x4& v
 	glUniformMatrix4fv(vmLoc, 1, false, glm::value_ptr(view));
 }
 
-void ShaderManager::BindTextures()
+void ShaderManager::BindLightMapTexture(int textureId)
 {
 	const ShaderProgram& prog = programs[activeProgram];
-	int lightmapAtlas = glGetUniformLocation(prog.programId, "lightmapAtlas");
-	glUniform1i(lightmapAtlas, 0);	
-}
-
-void ShaderManager::BindLightMapId(int id)
-{
-	const ShaderProgram& prog = programs[activeProgram];
-	int lightmapId = glGetUniformLocation(prog.programId, "lightmapId");
-	glUniform1i(lightmapId, 0);
+	int lightmapId = glGetUniformLocation(prog.programId, "lightmapAtlas");
+	glUniform1i(lightmapId, textureId);
 }
