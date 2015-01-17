@@ -31,7 +31,6 @@ public:
 
 	void UseProgram(ShaderProgs program);
 	void BindMatiricies(const glm::mat4x4& proj, const glm::mat4x4& view);
-	void BindLightMapTexture(int textureId);
 
 private:
 	ShaderProgram programs[MAX_SHADER_PROGS];

@@ -58,8 +58,14 @@ void Renderer::InitGl(GLFWwindow* window)
 	glBindTexture(GL_TEXTURE_2D, lightmapAlias);
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 128 * bsp.LightMapCount(), 128, 0, GL_RGB, GL_UNSIGNED_BYTE, bsp.LightMaps());
-	shaderManager.BindLightMapTexture(lightmapAlias);
+	const byte *imageBits = (byte*) bsp.LightMaps()->imageData;
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 128, 128, 0, GL_RGB, GL_UNSIGNED_BYTE, imageBits);
+
+	glGenSamplers(1, &sampler);
+	glSamplerParameteri(sampler, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glSamplerParameteri(sampler, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glSamplerParameteri(sampler, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glSamplerParameteri(sampler, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 }
 
 void Renderer::Render(const Time time)
@@ -77,9 +83,12 @@ void Renderer::Render(const Time time)
 
 	glBindVertexArray(vao);
 
+	glActiveTexture(GL_TEXTURE0 + 0);
+	glBindTexture(GL_TEXTURE_2D, lightmapAlias);
+	glBindSampler(0, sampler);
+
 	BSPFace const * faces = bsp.Faces();
 	int const * indices = bsp.Indices();
-	glBindTexture(GL_TEXTURE_2D, lightmapAlias);
 	for (int i = 0; i < bsp.FaceCount(); i++)
 	{
 		glDrawElementsBaseVertex(GL_TRIANGLES, faces->numIndices, GL_UNSIGNED_INT, 

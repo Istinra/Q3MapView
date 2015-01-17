@@ -53,14 +53,14 @@ bool ShaderManager::LoadDefaultShaders()
 	const char* fragmentShaderSource =
 		"#version 400\n"
 
-		"uniform sampler2D lightmapAtlas;\n"
+		"uniform sampler2D lmSampler;\n"
 
 		"in vec2 v_TexCoordinate;\n"
 
 		"out vec4 frag_colour;\n"
 
 		"void main () {\n"
-		"  frag_colour = texture2D(lightmapAtlas, v_TexCoordinate);\n"
+		"  frag_colour = texture2D(lmSampler, v_TexCoordinate);\n"
 		"}\n";
 
 	ShaderProgram& defaultShader = programs[DEFAULT];
@@ -110,6 +110,8 @@ bool ShaderManager::LoadDefaultShaders()
 	
 	glLinkProgram(defaultShader.programId);
 
+	int lightmapId = glGetUniformLocation(defaultShader.programId, "lmSampler");
+	glUniform1i(lightmapId, 0);
 	
 	glGetProgramiv(defaultShader.programId, GL_LINK_STATUS, &status);
 	if (status == GL_FALSE)
@@ -140,11 +142,4 @@ void ShaderManager::BindMatiricies(const glm::mat4x4& proj, const glm::mat4x4& v
 	glUniformMatrix4fv(projLoc, 1, false, glm::value_ptr(proj));
 	int vmLoc = glGetUniformLocation(prog.programId, "modelviewMatrix");
 	glUniformMatrix4fv(vmLoc, 1, false, glm::value_ptr(view));
-}
-
-void ShaderManager::BindLightMapTexture(int textureId)
-{
-	const ShaderProgram& prog = programs[activeProgram];
-	int lightmapId = glGetUniformLocation(prog.programId, "lightmapAtlas");
-	glUniform1i(lightmapId, textureId);
 }

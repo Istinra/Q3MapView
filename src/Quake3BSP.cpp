@@ -82,7 +82,7 @@ bool Quake3Bsp::LoadFromFile(const std::string fileName)
 	//Load Light Maps
 	numLightMaps = lumps[LIGHT_MAPS].length / sizeof(BSPLightMap);
 	lightMaps = new BSPLightMap[numLightMaps];
-	fseek(f, lumps[PLANES].offset, 0);
+	fseek(f, lumps[LIGHT_MAPS].offset, 0);
 	fread(lightMaps, sizeof(BSPLightMap), numLightMaps, f);
 
 	fclose(f);

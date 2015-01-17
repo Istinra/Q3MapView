@@ -31,6 +31,7 @@ private:
 	Quake3Bsp bsp;
 	unsigned int vao, vbo, ibo;
 
+	unsigned int sampler;
 	unsigned int lightmapAlias;
 };
 
