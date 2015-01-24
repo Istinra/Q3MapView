@@ -47,7 +47,7 @@ bool ShaderManager::LoadDefaultShaders()
 		"void main()\n"
 		"{\n"
 			"gl_Position = projectionMatrix * modelviewMatrix * vec4(pos, 1);\n"
-			"v_TexCoordinate = lightCoords;" //This breaks it?
+			"v_TexCoordinate = lightCoords;"
 		"};\n";
 
 	const char* fragmentShaderSource =

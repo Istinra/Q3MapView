@@ -22,7 +22,9 @@ void Renderer::InitGl(GLFWwindow* window)
 	ratio = width / static_cast<float>(height);
 	glViewport(0, 0, width, height);
 	glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_LESS);
+	glDepthMask(GL_TRUE);
+	glDepthFunc(GL_LEQUAL);
+	glDepthRange(0.0f, 1.0f);
 	glClearColor(0.2f, 0.2f, 0.2f, 1);
 
 	projection = glm::perspective(0.785398163f, ratio, 0.001f, 1000000.0f);
@@ -42,15 +44,15 @@ void Renderer::InitGl(GLFWwindow* window)
 	glBufferData(GL_ARRAY_BUFFER, bsp.VertCount() * sizeof(BSPVertex), bsp.Verts(), GL_STATIC_DRAW);
 
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(BSPVertex), 0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(BSPVertex), nullptr);
 	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(BSPVertex), (void *) (3 * sizeof(float)));
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(BSPVertex), reinterpret_cast<void *>(3 * sizeof(float)));
 	glEnableVertexAttribArray(2);
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(BSPVertex), (void *) (5 * sizeof(float)));
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(BSPVertex), reinterpret_cast<void *>(5 * sizeof(float)));
 	glEnableVertexAttribArray(3);
-	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(BSPVertex), (void *) (7 * sizeof(float)));
+	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(BSPVertex), reinterpret_cast<void *>(7 * sizeof(float)));
 	glEnableVertexAttribArray(4);
-	glVertexAttribPointer(4, 4, GL_BYTE, GL_FALSE, sizeof(BSPVertex), (void *) (10 * sizeof(float)));
+	glVertexAttribPointer(4, 4, GL_BYTE, GL_FALSE, sizeof(BSPVertex), reinterpret_cast<void *>(10 * sizeof(float)));
 
 	//Textures
 	glActiveTexture(GL_TEXTURE0);
@@ -58,7 +60,7 @@ void Renderer::InitGl(GLFWwindow* window)
 	glBindTexture(GL_TEXTURE_2D, lightmapAlias);
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
-	const byte *imageBits = (byte*) bsp.LightMaps()->imageData;
+	const byte *imageBits = reinterpret_cast<const byte*>(bsp.LightMaps()->imageData);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 128, 128, 0, GL_RGB, GL_UNSIGNED_BYTE, imageBits);
 
 	glGenSamplers(1, &sampler);
@@ -92,7 +94,7 @@ void Renderer::Render(const Time time)
 	for (int i = 0; i < bsp.FaceCount(); i++)
 	{
 		glDrawElementsBaseVertex(GL_TRIANGLES, faces->numIndices, GL_UNSIGNED_INT, 
-			(void*) (faces->startIndex * sizeof(int)), faces->startVertIndex);
+			reinterpret_cast<void *>(faces->startIndex * sizeof(int)), faces->startVertIndex);
 		++faces;
 	}
 }
