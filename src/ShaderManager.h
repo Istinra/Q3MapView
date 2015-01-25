@@ -2,12 +2,15 @@
 #define _SHADER_MANAGER_H_
 
 #include <mat4x4.hpp>
+#include <map>
 
-enum ShaderUniformConstants
+enum class ShaderUniformConsts
 {
-	MO = 0,
+	PROJECTION_MATRIX,
+	VIEW_MATRIX,
 
-	MAX_UNIFORMCONSTS
+	LIGHTMAP_SAMPLER,
+
 };
 
 enum ShaderProgs
@@ -19,6 +22,7 @@ enum ShaderProgs
 struct ShaderProgram
 {
 	int programId, vertexId, fragmentId;
+	std::map<ShaderUniformConsts, GLuint> uniformLocations;
 };
 
 class ShaderManager
@@ -30,11 +34,25 @@ public:
 	bool LoadDefaultShaders();
 
 	void UseProgram(ShaderProgs program);
-	void BindMatiricies(const glm::mat4x4& proj, const glm::mat4x4& view);
+
+	template<typename T>
+	void BindUniformData(ShaderUniformConsts type, const T data)
+	{
+		const ShaderProgram& prog = programs[activeProgram];
+		auto typeIt = prog.uniformLocations.find(type);
+		if (typeIt != prog.uniformLocations.end())
+		{
+			GLuint loc = typeIt->second;
+			BindUniform(loc, data);
+		}
+	}
 
 private:
-	ShaderProgram programs[MAX_SHADER_PROGS];
+	ShaderProgram programs[ShaderProgs::MAX_SHADER_PROGS];
 	ShaderProgs activeProgram;
+
+	void BindUniform(GLuint loc, const glm::mat4x4& mat);
+	void BindUniform(GLuint loc, const GLuint value);
 };
 
 #endif

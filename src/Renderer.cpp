@@ -78,7 +78,9 @@ void Renderer::Render(const Time time)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
 	shaderManager.UseProgram(DEFAULT);
-	shaderManager.BindMatiricies(projection, camera.ViewMatrix());
+	shaderManager.BindUniformData(ShaderUniformConsts::PROJECTION_MATRIX, projection);
+	shaderManager.BindUniformData(ShaderUniformConsts::VIEW_MATRIX, camera.ViewMatrix());
+	shaderManager.BindUniformData<GLuint>(ShaderUniformConsts::LIGHTMAP_SAMPLER, 0);
 
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
@@ -90,7 +92,6 @@ void Renderer::Render(const Time time)
 	glBindSampler(0, sampler);
 
 	BSPFace const * faces = bsp.Faces();
-	int const * indices = bsp.Indices();
 	for (int i = 0; i < bsp.FaceCount(); i++)
 	{
 		glDrawElementsBaseVertex(GL_TRIANGLES, faces->numIndices, GL_UNSIGNED_INT, 

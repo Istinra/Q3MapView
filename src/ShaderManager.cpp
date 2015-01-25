@@ -110,8 +110,10 @@ bool ShaderManager::LoadDefaultShaders()
 	
 	glLinkProgram(defaultShader.programId);
 
-	int lightmapId = glGetUniformLocation(defaultShader.programId, "lmSampler");
-	glUniform1i(lightmapId, 0);
+	defaultShader.uniformLocations[ShaderUniformConsts::PROJECTION_MATRIX] = glGetUniformLocation(defaultShader.programId, "projectionMatrix");
+	defaultShader.uniformLocations[ShaderUniformConsts::VIEW_MATRIX] = glGetUniformLocation(defaultShader.programId, "modelviewMatrix");
+	defaultShader.uniformLocations[ShaderUniformConsts::LIGHTMAP_SAMPLER] = glGetUniformLocation(defaultShader.programId, "lmSampler");
+	
 	
 	glGetProgramiv(defaultShader.programId, GL_LINK_STATUS, &status);
 	if (status == GL_FALSE)
@@ -135,11 +137,12 @@ void ShaderManager::UseProgram(ShaderProgs program)
 	}
 }
 
-void ShaderManager::BindMatiricies(const glm::mat4x4& proj, const glm::mat4x4& view)
+void ShaderManager::BindUniform(GLuint loc, const glm::mat4x4& mat)
 {
-	const ShaderProgram& prog = programs[activeProgram];
-	int projLoc = glGetUniformLocation(prog.programId, "projectionMatrix");
-	glUniformMatrix4fv(projLoc, 1, false, glm::value_ptr(proj));
-	int vmLoc = glGetUniformLocation(prog.programId, "modelviewMatrix");
-	glUniformMatrix4fv(vmLoc, 1, false, glm::value_ptr(view));
+	glUniformMatrix4fv(loc, 1, false, glm::value_ptr(mat));
+}
+
+void ShaderManager::BindUniform(GLuint loc, const GLuint value)
+{
+	glUniform1i(loc, value);
 }
