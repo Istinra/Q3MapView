@@ -4,19 +4,21 @@
 #include <GLFW/glfw3.h>
 #include <mat4x4.hpp>
 #include "FreeCamera.h"
+#include "Texture.h"
 #include "Common.h"
 #include "ShaderManager.h"
 #include "Quake3BSP.h"
+#include <vector>
 
 class Renderer
 {
 public:
-	Renderer(Keyboard& keyboard);
+	explicit Renderer(Keyboard& keyboard);
 	~Renderer();
 
 	void InitGl(GLFWwindow* window);
 	void Render(const Time time);
-	
+
 private:
 	int width;
 	int height;
@@ -27,12 +29,13 @@ private:
 
 	glm::mat4x4 projection;
 
+	std::vector<Texture> lightmaps;
+
 	//Test remove me
 	Quake3Bsp bsp;
 	unsigned int vao, vbo, ibo;
 
 	unsigned int sampler;
-	unsigned int lightmapAlias;
 };
 
 #endif

@@ -28,7 +28,7 @@ void Renderer::InitGl(GLFWwindow* window)
 	glClearColor(0.2f, 0.2f, 0.2f, 1);
 
 	projection = glm::perspective(0.785398163f, ratio, 0.001f, 1000000.0f);
-	
+
 	shaderManager.LoadDefaultShaders();
 	shaderManager.UseProgram(DEFAULT);
 
@@ -56,12 +56,9 @@ void Renderer::InitGl(GLFWwindow* window)
 
 	//Textures
 	glActiveTexture(GL_TEXTURE0);
-	glGenTextures(1, &lightmapAlias);
-	glBindTexture(GL_TEXTURE_2D, lightmapAlias);
-	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
-	const byte *imageBits = reinterpret_cast<const byte*>(bsp.LightMaps()->imageData);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 128, 128, 0, GL_RGB, GL_UNSIGNED_BYTE, imageBits);
+	const byte* imageBits = reinterpret_cast<const byte*>(bsp.LightMaps()->imageData);
+	lightmaps.push_back(Texture(0, 128, 128, imageBits));
 
 	glGenSamplers(1, &sampler);
 	glSamplerParameteri(sampler, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -76,7 +73,7 @@ void Renderer::Render(const Time time)
 	glViewport(0, 0, width, height);
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	
+
 	shaderManager.UseProgram(DEFAULT);
 	shaderManager.BindUniformData(ShaderUniformConsts::PROJECTION_MATRIX, projection);
 	shaderManager.BindUniformData(ShaderUniformConsts::VIEW_MATRIX, camera.ViewMatrix());
@@ -88,14 +85,14 @@ void Renderer::Render(const Time time)
 	glBindVertexArray(vao);
 
 	glActiveTexture(GL_TEXTURE0 + 0);
-	glBindTexture(GL_TEXTURE_2D, lightmapAlias);
+	Texture& lightMap = lightmaps.at(0);
 	glBindSampler(0, sampler);
 
-	BSPFace const * faces = bsp.Faces();
+	BSPFace const* faces = bsp.Faces();
 	for (int i = 0; i < bsp.FaceCount(); i++)
 	{
-		glDrawElementsBaseVertex(GL_TRIANGLES, faces->numIndices, GL_UNSIGNED_INT, 
-			reinterpret_cast<void *>(faces->startIndex * sizeof(int)), faces->startVertIndex);
+		glDrawElementsBaseVertex(GL_TRIANGLES, faces->numIndices, GL_UNSIGNED_INT,
+		                                     reinterpret_cast<void *>(faces->startIndex * sizeof(int)), faces->startVertIndex);
 		++faces;
 	}
 }

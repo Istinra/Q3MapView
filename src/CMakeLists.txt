@@ -13,7 +13,9 @@ Keyboard.cpp
 FreeCamera.h
 FreeCamera.cpp
 Renderer.h
-Renderer.cpp)
+Renderer.cpp
+Texture.h
+Texture.cpp)
 
 set(EXTERNAL_LIBS glfw ${GLFW_LIBRARIES})
 
