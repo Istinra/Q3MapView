@@ -14,6 +14,7 @@ Renderer::~Renderer()
 	glDeleteVertexArrays(1, &vao);
 	glDeleteBuffers(1, &vbo);
 	glDeleteBuffers(1, &ibo);
+	glDeleteSamplers(1, &sampler);
 }
 
 void Renderer::InitGl(GLFWwindow* window)
@@ -95,4 +96,25 @@ void Renderer::Render(const Time time)
 		                                     reinterpret_cast<void *>(faces->startIndex * sizeof(int)), faces->startVertIndex);
 		++faces;
 	}
+
+	/*
+	const BSPLeaf& currentLeaf = bsp.FindLeaf(camera.Position());
+	const BSPLeaf* leaves = bsp.Leaves();
+	const BSPFace* faces = bsp.Faces();
+
+	for (int i = 0; i < bsp.LeafCount(); ++i)
+	{
+		const BSPLeaf& targetLeaf = leaves[i];
+		if (bsp.IsLeafVisible(currentLeaf.visData, targetLeaf.visData))
+		{
+			for (int j = targetLeaf.firstLeafFace; j < targetLeaf.numLeafFace; j++)
+			{
+				glDrawElementsBaseVertex(GL_TRIANGLES, faces->numIndices, GL_UNSIGNED_INT,
+					reinterpret_cast<void *>(faces->startIndex * sizeof(int)), faces->startVertIndex);
+				++faces;
+			}
+		}
+
+	}
+	*/
 }

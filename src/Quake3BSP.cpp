@@ -2,7 +2,7 @@
 #include <cstdio>
 
 Quake3Bsp::Quake3Bsp() : verts(nullptr), faces(nullptr), indices(nullptr),
-nodes(nullptr), leaves(nullptr), planes(nullptr), lightMaps(nullptr)
+nodes(nullptr), leaves(nullptr), planes(nullptr), lightMaps(nullptr), visData(nullptr)
 {
 }
 
@@ -22,6 +22,8 @@ Quake3Bsp::~Quake3Bsp()
 		delete [] planes;
 	if (lightMaps)
 		delete[] lightMaps;
+	if (visData)
+		delete[] visData;
 }
 
 bool Quake3Bsp::LoadFromFile(const std::string fileName)
@@ -85,11 +87,17 @@ bool Quake3Bsp::LoadFromFile(const std::string fileName)
 	fseek(f, lumps[LIGHT_MAPS].offset, 0);
 	fread(lightMaps, sizeof(BSPLightMap), numLightMaps, f);
 
+	//Load Vis Data
+	numVisData = lumps[VIS_DATA].length / sizeof(BSPVisData);
+	visData = new BSPVisData[numVisData];
+	fseek(f, lumps[VIS_DATA].offset, 0);
+	fread(visData, sizeof(BSPVisData), numVisData, f);
+
 	fclose(f);
 	return true;
 }
 
-int Quake3Bsp::FindLeaf(const Vec3 position) const
+const BSPLeaf& Quake3Bsp::FindLeaf(Vec3 position) const
 {
 	int nodeIndex = 0;
 
@@ -113,7 +121,15 @@ int Quake3Bsp::FindLeaf(const Vec3 position) const
 		}
 	}
 	//When the node references a leaf the number is negative -(nodeIndex + 1)
-	return ~nodeIndex;
+	return leaves[~nodeIndex];
+}
+
+bool Quake3Bsp::IsLeafVisible(const int fromData, const int toData)
+{
+	if (!visData->vectors || fromData < 0)
+		return true;
+	byte vector = visData->vectors[fromData * visData->vecSize + toData / 8];
+	return vector & (1 << (toData & 7));
 }
 
 void Quake3Bsp::SwizzleVector(Vec3& vec3) const

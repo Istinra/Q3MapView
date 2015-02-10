@@ -14,6 +14,8 @@ public :
 
 	const glm::mat4x4& ViewMatrix() const { return viewMatrix; }
 
+	Vec3 Position() const { return position; }
+
 private:
 	Keyboard& keyboard;
 	Vec3 position;

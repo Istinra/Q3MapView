@@ -12,17 +12,27 @@ public:
 
 	bool LoadFromFile(const std::string fileName);
 
-	BSPFace const * const Faces() const { return faces; }
+	const BSPLeaf& FindLeaf(Vec3 position) const;
+
+	bool IsLeafVisible(const int fromData, const int toData);
+
+	BSPFace const * Faces() const { return faces; }
 	int FaceCount() const { return numFaces; }
 
-	BSPVertex const * const Verts() const { return verts; }
+	BSPVertex const * Verts() const { return verts; }
 	int VertCount() const { return numVerts; }
 
-	int const * const Indices() const { return indices; }
+	int const * Indices() const { return indices; }
 	int IndiceCount() const { return numIndices; }
 
-	BSPLightMap const * const LightMaps() const { return lightMaps; }
+	BSPLeaf const * Leaves() const { return leaves; }
+	int LeafCount() const { return numLeaves; }
+
+	BSPLightMap const * LightMaps() const { return lightMaps; }
 	int LightMapCount() const { return numLightMaps; }
+
+	BSPVisData const * VisData() const { return visData; }
+	int VisDataCount() const { return numVisData; }
 
 private:
 	int numVerts;
@@ -46,7 +56,8 @@ private:
 	int numLightMaps;
 	BSPLightMap *lightMaps;
 
-	int FindLeaf(Vec3 position) const;
+	int numVisData;
+	BSPVisData *visData;
 
 	void SwizzleVector(Vec3& vec3) const;
 	void SwizzleVerts();
