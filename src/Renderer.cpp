@@ -88,7 +88,7 @@ void Renderer::Render(const Time time)
 	glActiveTexture(GL_TEXTURE0 + 0);
 	Texture& lightMap = lightmaps.at(0);
 	glBindSampler(0, sampler);
-
+	/*
 	BSPFace const* faces = bsp.Faces();
 	for (int i = 0; i < bsp.FaceCount(); i++)
 	{
@@ -97,24 +97,30 @@ void Renderer::Render(const Time time)
 		++faces;
 	}
 
-	/*
+	*/
 	const BSPLeaf& currentLeaf = bsp.FindLeaf(camera.Position());
 	const BSPLeaf* leaves = bsp.Leaves();
 	const BSPFace* faces = bsp.Faces();
+	const int* leafFaces = bsp.LeafFaces();
 
 	for (int i = 0; i < bsp.LeafCount(); ++i)
 	{
 		const BSPLeaf& targetLeaf = leaves[i];
+		
 		if (bsp.IsLeafVisible(currentLeaf.visData, targetLeaf.visData))
 		{
-			for (int j = targetLeaf.firstLeafFace; j < targetLeaf.numLeafFace; j++)
+			for (int j = 0; j < targetLeaf.numLeafFace; ++j)
 			{
-				glDrawElementsBaseVertex(GL_TRIANGLES, faces->numIndices, GL_UNSIGNED_INT,
-					reinterpret_cast<void *>(faces->startIndex * sizeof(int)), faces->startVertIndex);
-				++faces;
+				int faceIndex = leafFaces[targetLeaf.firstLeafFace + j];
+				const BSPFace* face = &faces[faceIndex];
+				if (face->type == POLYGON)
+				{
+					glDrawElementsBaseVertex(GL_TRIANGLES, face->numIndices, GL_UNSIGNED_INT,
+						reinterpret_cast<void *>(face->startIndex * sizeof(int)), face->startVertIndex);
+				}
 			}
 		}
 
-	}
-	*/
+	}	
 }
+

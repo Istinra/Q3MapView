@@ -18,6 +18,8 @@ Quake3Bsp::~Quake3Bsp()
 		delete [] nodes;
 	if (leaves)
 		delete [] leaves;
+	if (leafFaces)
+		delete[] leafFaces;
 	if (planes)
 		delete [] planes;
 	if (lightMaps)
@@ -74,6 +76,12 @@ bool Quake3Bsp::LoadFromFile(const std::string fileName)
 	fseek(f, lumps[LEAFS].offset, 0);
 	fread(leaves, sizeof(BSPLeaf), numLeaves, f);
 
+	//Load Leaf Faces
+	numLeafFaces = lumps[LEAF_FACES].length / sizeof(int);
+	leafFaces = new int[numLeafFaces];
+	fseek(f, lumps[LEAF_FACES].offset, 0);
+	fread(leafFaces, sizeof(int), numLeafFaces, f);
+
 	//Load Planes
 	numPlanes = lumps[PLANES].length / sizeof(BSPPlane);
 	planes = new BSPPlane[numPlanes];
@@ -100,9 +108,9 @@ bool Quake3Bsp::LoadFromFile(const std::string fileName)
 const BSPLeaf& Quake3Bsp::FindLeaf(Vec3 position) const
 {
 	int nodeIndex = 0;
+	float distance = 0.0f;
 
-	float distance;
-	while (nodeIndex > 0)
+	while (nodeIndex >= 0)
 	{
 		const BSPNode &node = nodes[nodeIndex];
 		const BSPPlane &plane = planes[node.planeIndex];

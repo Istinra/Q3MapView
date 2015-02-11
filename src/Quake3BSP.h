@@ -28,6 +28,9 @@ public:
 	BSPLeaf const * Leaves() const { return leaves; }
 	int LeafCount() const { return numLeaves; }
 
+	int const * LeafFaces() const { return leafFaces; }
+	int LeafFaceCount() const { return numLeafFaces; }
+
 	BSPLightMap const * LightMaps() const { return lightMaps; }
 	int LightMapCount() const { return numLightMaps; }
 
@@ -50,6 +53,9 @@ private:
 	int numLeaves;
 	BSPLeaf *leaves;
 
+	int numLeafFaces;
+	int *leafFaces;
+	
 	int numPlanes;
 	BSPPlane *planes;
 
