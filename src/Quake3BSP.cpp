@@ -129,7 +129,7 @@ bool Quake3Bsp::LoadFromFile(const std::string fileName)
 const BSPLeaf& Quake3Bsp::FindLeaf(Vec3 position) const
 {
 	int nodeIndex = 0;
-	float distance = 0.0f;
+	float distance;
 
 	while (nodeIndex >= 0)
 	{
@@ -203,10 +203,20 @@ void Quake3Bsp::LoadTextures()
 		
 		std::string textureName = std::string(textureInfo[i].fileName);
 		StringReplaceAll(textureName, "/", "\\");
-		std::string fileName = (prefix + textureName);
-		FILE *f = fopen(fileName.c_str(), "rb");
-		byte *dataPtr = stbi_load_from_file(f, &textureData[0].width, &textureData[0].height, &comp, 0);
-		textureData[0].data.reset(dataPtr);
+		std::string fileName = prefix + textureName;
+
+		FILE *f = fopen((fileName + ".jpg").c_str(), "rb");
+		if (f == nullptr)
+			f = fopen((fileName + ".png").c_str(), "rb");
+		if (f == nullptr)
+		{
+			textureData[i].loaded = false;
+			continue;
+		}
+
+		byte *dataPtr = stbi_load_from_file(f, &textureData[i].width, &textureData[i].height, &comp, 0);
+		textureData[i].data.reset(dataPtr);
+		textureData[i].loaded = true;
 		fclose(f);
 	}
 }

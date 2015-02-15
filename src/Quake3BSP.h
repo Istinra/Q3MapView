@@ -7,6 +7,7 @@
 
 struct TextureData
 {
+	bool loaded;
 	int height, width;
 	std::unique_ptr<byte []> data;
 };
