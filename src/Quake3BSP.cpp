@@ -1,8 +1,11 @@
 #include "Quake3BSP.h"
 #include <cstdio>
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
 
 Quake3Bsp::Quake3Bsp() : verts(nullptr), faces(nullptr), indices(nullptr),
-nodes(nullptr), leaves(nullptr), planes(nullptr), lightMaps(nullptr), visData(nullptr)
+nodes(nullptr), leaves(nullptr), planes(nullptr), lightMaps(nullptr), visData(nullptr),
+textureInfo(nullptr), textureData(nullptr)
 {
 }
 
@@ -22,10 +25,20 @@ Quake3Bsp::~Quake3Bsp()
 		delete[] leafFaces;
 	if (planes)
 		delete [] planes;
-	if (lightMaps)
-		delete[] lightMaps;
 	if (visData)
 		delete[] visData;
+	
+	CleanUpTextures();
+}
+
+void Quake3Bsp::CleanUpTextures()
+{
+	if (textureInfo)
+		delete[] textureInfo;
+	if (lightMaps)
+		delete[] lightMaps;
+	if (textureData)
+		delete[] textureData;
 }
 
 bool Quake3Bsp::LoadFromFile(const std::string fileName)
@@ -101,6 +114,14 @@ bool Quake3Bsp::LoadFromFile(const std::string fileName)
 	fseek(f, lumps[VIS_DATA].offset, 0);
 	fread(visData, sizeof(BSPVisData), numVisData, f);
 
+	//Load Textures
+	numTextures = lumps[TEXTURES].length / sizeof(BSPTexture);
+	textureInfo = new BSPTexture[numTextures];
+	fseek(f, lumps[TEXTURES].offset, 0);
+	fread(textureInfo, sizeof(BSPTexture), numTextures, f);
+
+	LoadTextures();
+
 	fclose(f);
 	return true;
 }
@@ -168,5 +189,24 @@ void Quake3Bsp::SwizzlePlanes()
 	for (int i = 0; i < numPlanes; ++i)
 	{
 		SwizzleVector(planes[i].normal);
+	}
+}
+
+void Quake3Bsp::LoadTextures()
+{
+	//Load files as raw texture data
+	textureData = new TextureData[numTextures];
+	std::string prefix = std::string("C:\\Users\\Samuel\\Documents\\Q3MapView\\test-res\\");
+	for (int i = 0; i < numTextures; ++i)
+	{
+		int comp;
+		
+		std::string textureName = std::string(textureInfo[i].fileName);
+		StringReplaceAll(textureName, "/", "\\");
+		std::string fileName = (prefix + textureName);
+		FILE *f = fopen(fileName.c_str(), "rb");
+		byte *dataPtr = stbi_load_from_file(f, &textureData[0].width, &textureData[0].height, &comp, 0);
+		textureData[0].data.reset(dataPtr);
+		fclose(f);
 	}
 }

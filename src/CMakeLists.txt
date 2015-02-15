@@ -3,6 +3,8 @@ BSPTypes.h
 Quake3BSP.h
 Quake3BSP.cpp
 Common.h
+Common.cpp
+stb_image.h
 glew.h
 wglew.h
 glew.c

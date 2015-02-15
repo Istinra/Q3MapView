@@ -29,12 +29,11 @@ private:
 
 	glm::mat4x4 projection;
 
+	std::vector<Texture> textures;
 	std::vector<Texture> lightmaps;
 
-	//Test remove me
 	Quake3Bsp bsp;
 	unsigned int vao, vbo, ibo;
-
 	unsigned int sampler;
 };
 

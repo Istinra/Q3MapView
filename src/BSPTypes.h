@@ -116,6 +116,13 @@ struct BSPVisData
 	byte *vectors;
 };
 
+struct BSPTexture
+{
+	char fileName[64];
+	int flags;
+	int contents;
+};
+
 struct BSPLightMap
 {
 	byte imageData[128][128][3];

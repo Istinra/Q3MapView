@@ -26,6 +26,7 @@ void ErrorCallback(int error, const char* description)
 {
 	fs << "Error code << " << error << " " << description << std::endl;
 }
+
 int main() {
 
 	fs.open("glfw.log", std::fstream::out | std::fstream::app);

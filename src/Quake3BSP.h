@@ -2,7 +2,14 @@
 #define _QUAKE_3_BSP_
 
 #include <string>
+#include <memory>
 #include "BSPTypes.h"
+
+struct TextureData
+{
+	int height, width;
+	std::unique_ptr<byte []> data;
+};
 
 class Quake3Bsp
 {
@@ -10,11 +17,16 @@ public:
 	Quake3Bsp();
 	~Quake3Bsp();
 
+	//Loads and initialises the BSP
 	bool LoadFromFile(const std::string fileName);
 
 	const BSPLeaf& FindLeaf(Vec3 position) const;
 
+	//Checks if the to leaf is visible from the from leaf
 	bool IsLeafVisible(const int fromData, const int toData);
+	
+	//Texture data not needed after GL textures have been created
+	void CleanUpTextures();
 
 	BSPFace const * Faces() const { return faces; }
 	int FaceCount() const { return numFaces; }
@@ -65,10 +77,15 @@ private:
 	int numVisData;
 	BSPVisData *visData;
 
+	int numTextures;
+	BSPTexture *textureInfo;
+	TextureData *textureData;
+
 	void SwizzleVector(Vec3& vec3) const;
 	void SwizzleVerts();
 	void SwizzleFaces();
 	void SwizzlePlanes();
+	void LoadTextures();
 };
 
 #endif
