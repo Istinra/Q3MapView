@@ -17,8 +17,8 @@ public:
 
 private:
 	//Can't copy opengl resources, need to move them
-	Texture(const Texture&);
-	Texture& operator=(const Texture&);
+	Texture(const Texture&) = delete;
+	Texture& operator=(const Texture&) = delete;
 
 	int mapTextureId;
 	GLuint glTextureId;

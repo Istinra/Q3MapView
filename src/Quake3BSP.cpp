@@ -1,7 +1,7 @@
 #include "Quake3BSP.h"
 #include <cstdio>
 #define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
+#include "stb_lib.h"
 
 Quake3Bsp::Quake3Bsp() : verts(nullptr), faces(nullptr), indices(nullptr),
 nodes(nullptr), leaves(nullptr), planes(nullptr), lightMaps(nullptr), visData(nullptr),

@@ -35,6 +35,8 @@ private:
 	Quake3Bsp bsp;
 	unsigned int vao, vbo, ibo;
 	unsigned int sampler;
+
+	void CreateTextures();
 };
 
 #endif

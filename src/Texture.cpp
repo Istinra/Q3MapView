@@ -7,7 +7,7 @@ Texture::Texture(int mapTextureId, int width, int height, const byte* data) : ma
 	Bind();
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 128, 128, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
 }
 
 Texture::Texture(Texture&& o) : mapTextureId(o.mapTextureId), glTextureId(o.glTextureId), textureUnit(o.textureUnit)

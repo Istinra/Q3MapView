@@ -4,7 +4,8 @@ Quake3BSP.h
 Quake3BSP.cpp
 Common.h
 Common.cpp
-stb_image.h
+stb_lib.h
+stb_image.c
 glew.h
 wglew.h
 glew.c

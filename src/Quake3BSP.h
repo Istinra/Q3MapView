@@ -50,6 +50,10 @@ public:
 	BSPVisData const * VisData() const { return visData; }
 	int VisDataCount() const { return numVisData; }
 
+	BSPTexture const * TexInfo() const { return textureInfo; }
+	TextureData const * TexeData() const { return textureData; }
+	int TextureCount() const { return numTextures; }
+
 private:
 	int numVerts;
 	BSPVertex *verts;

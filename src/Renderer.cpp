@@ -57,9 +57,10 @@ void Renderer::InitGl(GLFWwindow* window)
 
 	//Textures
 	glActiveTexture(GL_TEXTURE0);
+	CreateTextures();
 
 	const byte* imageBits = reinterpret_cast<const byte*>(bsp.LightMaps()->imageData);
-	lightmaps.push_back(Texture(0, 128, 128, imageBits));
+	lightmaps.emplace_back(0, 128, 128, imageBits);
 
 	glGenSamplers(1, &sampler);
 	glSamplerParameteri(sampler, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -88,16 +89,7 @@ void Renderer::Render(const Time time)
 	glActiveTexture(GL_TEXTURE0 + 0);
 	Texture& lightMap = lightmaps.at(0);
 	glBindSampler(0, sampler);
-	/*
-	BSPFace const* faces = bsp.Faces();
-	for (int i = 0; i < bsp.FaceCount(); i++)
-	{
-		glDrawElementsBaseVertex(GL_TRIANGLES, faces->numIndices, GL_UNSIGNED_INT,
-		                                     reinterpret_cast<void *>(faces->startIndex * sizeof(int)), faces->startVertIndex);
-		++faces;
-	}
 
-	*/
 	const BSPLeaf& currentLeaf = bsp.FindLeaf(camera.Position());
 	const BSPLeaf* leaves = bsp.Leaves();
 	const BSPFace* faces = bsp.Faces();
@@ -124,3 +116,13 @@ void Renderer::Render(const Time time)
 	}	
 }
 
+void Renderer::CreateTextures()
+{
+	const TextureData* data = bsp.TexeData();
+	int numTextures = bsp.TextureCount();
+	for (int i = 0; i < numTextures; ++i)
+	{
+		textures.emplace_back(i, data[i].width, data[i].height, data[i].data.get());
+	}
+	bsp.CleanUpTextures();
+}
